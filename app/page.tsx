@@ -3,7 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Carousel,
   CarouselContent,
@@ -11,8 +15,20 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { CalendarIcon, MapPin, Star, Utensils, Wifi, Facebook, Instagram, Twitter, Youtube, Mail, Phone } from "lucide-react";
-import { useState } from "react";
+import {
+  CalendarIcon,
+  MapPin,
+  Star,
+  Utensils,
+  Wifi,
+  Facebook,
+  Instagram,
+  Twitter,
+  Youtube,
+  Mail,
+  Phone,
+} from "lucide-react";
+import { useState, useEffect } from "react";
 
 const carouselImages = [
   {
@@ -35,54 +51,81 @@ const carouselImages = [
 export default function Home() {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
+  const [api, setApi] = useState<CarouselApi>();
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      api.scrollNext();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [api]);
+
   return (
     <main className="min-h-screen bg-background">
       {/* Hero Carousel */}
-      <div className="relative h-[80vh]">
-        <Carousel className="w-full h-full">
-          <CarouselContent>
-            {carouselImages.map((image, index) => (
-              <CarouselItem key={index} className="h-full">
-                <div className="relative h-full">
+      <div className="relative w-full min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]">
+        <div className="absolute inset-0">
+          <Carousel
+            className="relative w-full h-full"
+            setApi={setApi}
+            opts={{
+              loop: true,
+              align: "start",
+            }}
+          >
+            <CarouselContent>
+              {carouselImages.map((image, index) => (
+                <CarouselItem key={index}>
                   <div
-                    className="absolute inset-0 bg-cover bg-center transition-transform duration-500"
+                    className="relative w-full h-full"
                     style={{
                       backgroundImage: `url('${image.url}')`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                      backgroundAttachment: "fixed",
                     }}
                   >
                     <div className="absolute inset-0 bg-black/50" />
-                  </div>
-                  <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center">
-                    <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-                      {image.title}
-                    </h1>
-                    <p className="text-xl text-gray-200 mb-8 max-w-2xl">
-                      {image.subtitle}
-                    </p>
-                    <div className="flex flex-wrap gap-4">
-                      <Button size="lg" className="bg-primary hover:bg-primary/90">
-                        Book Now
-                      </Button>
-                      <Button
-                        size="lg"
-                        variant="outline"
-                        className="bg-transparent text-white hover:bg-white/20"
-                      >
-                        Take a Tour
-                      </Button>
+                    <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col justify-center min-h-[50vh] sm:min-h-[60vh] md:min-h-[70vh]">
+                      <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
+                        {image.title}
+                      </h1>
+                      <p className="text-xl text-gray-200 mb-8 max-w-2xl">
+                        {image.subtitle}
+                      </p>
+                      <div className="flex flex-wrap gap-4">
+                        <Button
+                          size="lg"
+                          className="bg-primary hover:bg-primary/90"
+                        >
+                          Book Now
+                        </Button>
+                        <Button
+                          size="lg"
+                          variant="outline"
+                          className="bg-transparent text-white hover:bg-white/20"
+                        >
+                          Take a Tour
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <CarouselPrevious className="left-4" />
-          <CarouselNext className="right-4" />
-        </Carousel>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10" />
+            <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10" />
+          </Carousel>
+        </div>
       </div>
 
       {/* Booking Card */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10 mb-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-20 relative z-10 mb-20">
         <Card className="p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="text-sm font-medium mb-2 block">Check In</label>
@@ -197,19 +240,22 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+                image:
+                  "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
                 title: "Deluxe Suite",
                 price: "$299",
                 description: "Spacious room with city view",
               },
               {
-                image: "https://images.unsplash.com/photo-1591088398332-8a7791972843?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+                image:
+                  "https://images.unsplash.com/photo-1591088398332-8a7791972843?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
                 title: "Executive Room",
                 price: "$399",
                 description: "Premium room with ocean view",
               },
               {
-                image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
+                image:
+                  "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80",
                 title: "Presidential Suite",
                 price: "$599",
                 description: "Luxury suite with panoramic view",
@@ -225,10 +271,14 @@ export default function Home() {
                     <h3 className="font-semibold">{room.title}</h3>
                     <span className="text-primary font-bold">
                       {room.price}
-                      <span className="text-sm text-muted-foreground">/night</span>
+                      <span className="text-sm text-muted-foreground">
+                        /night
+                      </span>
                     </span>
                   </div>
-                  <p className="text-muted-foreground mb-4">{room.description}</p>
+                  <p className="text-muted-foreground mb-4">
+                    {room.description}
+                  </p>
                   <Button className="w-full">Book Now</Button>
                 </div>
               </Card>
@@ -244,7 +294,8 @@ export default function Home() {
             <div>
               <h3 className="font-bold text-lg mb-4">Luxury Hotel</h3>
               <p className="text-muted-foreground">
-                Experience the epitome of luxury and comfort in our premium accommodations.
+                Experience the epitome of luxury and comfort in our premium
+                accommodations.
               </p>
             </div>
             <div>
@@ -263,13 +314,21 @@ export default function Home() {
             <div>
               <h3 className="font-bold text-lg mb-4">Quick Links</h3>
               <div className="space-y-2">
-                <Button variant="link" className="p-0 h-auto">About Us</Button>
+                <Button variant="link" className="p-0 h-auto">
+                  About Us
+                </Button>
                 <br />
-                <Button variant="link" className="p-0 h-auto">Rooms</Button>
+                <Button variant="link" className="p-0 h-auto">
+                  Rooms
+                </Button>
                 <br />
-                <Button variant="link" className="p-0 h-auto">Dining</Button>
+                <Button variant="link" className="p-0 h-auto">
+                  Dining
+                </Button>
                 <br />
-                <Button variant="link" className="p-0 h-auto">Spa & Wellness</Button>
+                <Button variant="link" className="p-0 h-auto">
+                  Spa & Wellness
+                </Button>
               </div>
             </div>
             <div>
