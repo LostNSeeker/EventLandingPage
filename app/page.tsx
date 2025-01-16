@@ -29,6 +29,7 @@ import {
   Phone,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import type { CarouselApi } from "@/components/ui/carousel";
 
 const carouselImages = [
   {
